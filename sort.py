@@ -73,13 +73,17 @@ def move_file(file:Path, category:str, root_dir:Path) -> None:
                 if not new_path.exists():
                     file.replace(new_path)
     
-def sort_folder(path:Path) -> None:
-
-    for element in path.glob("**/*"):
+def sort_folder_recursive(path: Path) -> None:
+    for element in path.iterdir():
         if element.is_file():
             category = get_categories(element)
             move_file(element, category, path)
-            
+        elif element.is_dir():
+            sort_folder_recursive(element)
+
+def sort_folder(path: Path) -> None:
+    sort_folder_recursive(path)
+    
     # Перевірка чи пуста папка        
     for element in path.glob("**/*"):    
         if element.is_dir():
